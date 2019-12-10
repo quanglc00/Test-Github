@@ -74,15 +74,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Business\CustomerBusiness.cs" />
+    <Compile Include="Business\DishBusiness.cs" />
     <Compile Include="Business\EmployeeBusiness.cs" />
     <Compile Include="Business\KindOfDishBusiness.cs" />
     <Compile Include="Business\OrderBusiness.cs" />
     <Compile Include="Business\UserBusiness.cs" />
     <Compile Include="DataAccess\CustomerDataAccess.cs" />
+    <Compile Include="DataAccess\DishDataAccess.cs" />
     <Compile Include="DataAccess\EmployeeDataAccess.cs" />
     <Compile Include="DataAccess\KindOfDishDataAccess.cs" />
     <Compile Include="DataAccess\OrderDataAccess.cs" />
     <Compile Include="DataAccess\UserDataAccess.cs" />
+    <Compile Include="DishForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DishForm.Designer.cs">
+      <DependentUpon>DishForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emtity\Customer.cs" />
     <Compile Include="Emtity\Dish.cs" />
     <Compile Include="Emtity\Employee.cs" />
@@ -96,6 +104,21 @@
     </Compile>
     <Compile Include="KindOfDishForm.Designer.cs">
       <DependentUpon>KindOfDishForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ManagerResterantDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ManagerResterantDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="ManagerResterantDataSet1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ManagerResterantDataSet1.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="ManagerResterantDataSet2.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ManagerResterantDataSet2.xsd</DependentUpon>
     </Compile>
     <Compile Include="OrderForm.cs">
       <SubType>Form</SubType>
@@ -124,6 +147,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constant\SessionUser.cs" />
+    <EmbeddedResource Include="DishForm.resx">
+      <DependentUpon>DishForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="KindOfDishForm.resx">
       <DependentUpon>KindOfDishForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -149,6 +175,39 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="ManagerResterantDataSet.xsc">
+      <DependentUpon>ManagerResterantDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="ManagerResterantDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ManagerResterantDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="ManagerResterantDataSet.xss">
+      <DependentUpon>ManagerResterantDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="ManagerResterantDataSet1.xsc">
+      <DependentUpon>ManagerResterantDataSet1.xsd</DependentUpon>
+    </None>
+    <None Include="ManagerResterantDataSet1.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ManagerResterantDataSet1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="ManagerResterantDataSet1.xss">
+      <DependentUpon>ManagerResterantDataSet1.xsd</DependentUpon>
+    </None>
+    <None Include="ManagerResterantDataSet2.xsc">
+      <DependentUpon>ManagerResterantDataSet2.xsd</DependentUpon>
+    </None>
+    <None Include="ManagerResterantDataSet2.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ManagerResterantDataSet2.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="ManagerResterantDataSet2.xss">
+      <DependentUpon>ManagerResterantDataSet2.xsd</DependentUpon>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

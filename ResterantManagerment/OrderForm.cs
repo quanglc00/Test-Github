@@ -26,6 +26,7 @@ namespace ResterantManagerment
             dgvOrder.Columns.Add("Price", "Price");
             dgvOrder.Columns.Add("KindOfDishId", "Kind Of Dish");
             dgvOrder.Columns.Add("OrderTime", "Time Order");
+            dgvOrder.Columns.Add("Quantity", "Quantity");
             DisplayData();
             lbEmp.Text += " " + SessionUser.USER_NAME;
         }
@@ -53,17 +54,36 @@ namespace ResterantManagerment
 
         private void dgvListDish_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            dish.DishId = Int32.Parse(dgvListDish.Rows[e.RowIndex].Cells[0].Value.ToString());
-            dish.DishName = dgvListDish.Rows[e.RowIndex].Cells[1].Value.ToString();
-            dish.Price = decimal.Parse(dgvListDish.Rows[e.RowIndex].Cells[2].Value.ToString());
-            dish.KindOfDishId = Int32.Parse(dgvListDish.Rows[e.RowIndex].Cells[3].Value.ToString());
+            try
+            {
+                if (e != null)
+                {
+                    dish.DishId = Int32.Parse(dgvListDish.Rows[e.RowIndex].Cells[0].Value.ToString());
+                    dish.DishName = dgvListDish.Rows[e.RowIndex].Cells[1].Value.ToString();
+                    dish.Price = decimal.Parse(dgvListDish.Rows[e.RowIndex].Cells[2].Value.ToString());
+                    dish.KindOfDishId = Int32.Parse(dgvListDish.Rows[e.RowIndex].Cells[3].Value.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chọn lại!");
+            }
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
             if(dish != null)
             {
-                object[] row = new object[] { dish.DishId, dish.DishName, dish.Price, dish.KindOfDishId, DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss") };
+                var quantity = 1;
+                foreach (DataGridViewRow item in dgvOrder.Rows)
+                {
+                    if (Convert.ToInt32(item.Cells[0].Value) == dish.DishId)
+                    {
+                        quantity += Convert.ToInt32(item.Cells[5].Value);
+                        dgvOrder.Rows.RemoveAt(item.Index);
+                    }
+                }
+                object[] row = new object[] { dish.DishId, dish.DishName, dish.Price, dish.KindOfDishId, DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"), quantity };
                 dgvOrder.Rows.Add(row);
                 totalPrice.Text = CaclTotalPrice().ToString() + " VNĐ";
             }
@@ -78,13 +98,17 @@ namespace ResterantManagerment
             foreach (DataGridViewRow item in dgvOrder.Rows)
             {
                 int val = 0;
-                if (item.Cells[2].Value != null) // cell[3] equals to the price cell, change it if necessary
+                int quantity = 1;
+                if (item.Cells[2].Value != null)
+                {
+                    // cell[3] equals to the price cell, change it if necessary
                     Int32.TryParse(item.Cells[2].Value.ToString(), out val);
-                total += val;
+                    Int32.TryParse(item.Cells[5].Value.ToString(), out quantity);
+                }
+                total += val * quantity;
             }
             return total;
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             foreach (DataGridViewCell oneCell in dgvOrder.SelectedCells)
@@ -97,7 +121,7 @@ namespace ResterantManagerment
 
         private void btnInHd_Click(object sender, EventArgs e)
         {
-            String mycon = "Data Source=.\\SQLEXPRESS;Initial Catalog=Shop_VPP;Integrated Security=True";
+            String mycon = "Data Source=.\\SQLEXPRESS;Initial Catalog=ManagerResterant;Integrated Security=True";
             SqlConnection scon = new SqlConnection(mycon);
             scon.Open();
             SqlCommand cmd = new SqlCommand();
@@ -105,7 +129,7 @@ namespace ResterantManagerment
             {
                 if (dgvOrder != null)
                 {
-                    
+                    cmd.CommandText = "INSERT INTO [dbo].[Order]  VALUES(GETDATE(), " + cbbCustomer.SelectedValue +")";
                     cmd.Connection = scon;
                     cmd.ExecuteNonQuery();
                     //SqlCommand cmd = new SqlCommand();
@@ -116,34 +140,34 @@ namespace ResterantManagerment
                     DataSet ds = new DataSet();
                     da.Fill(ds);
                     int orderId = Convert.ToInt32(ds.Tables[0].Rows[0]["OrderId"].ToString());
-                    DataTable dt = new DataTable();
-                    dt = (DataTable)Session["buyitems"];
-                    List<DataRow> list = dt.AsEnumerable().ToList();
-                    foreach (var entry in list)
+                    foreach (DataGridViewRow item in dgvOrder.Rows)
                     {
-                        cmd.CommandText = "INSERT INTO [dbo].[OrderLine] VALUES(" + entry.ItemArray[1] + "," + orderId + "," + entry.ItemArray[7] + ")";
-                        cmd.ExecuteNonQuery();
+                        if (item.Cells[0].Value != null && item.Cells[5].Value != null)
+                        {
+                            cmd.CommandText = "INSERT INTO [dbo].[OrderDetails] VALUES(" + orderId + "," + item.Cells[0].Value + "," + item.Cells[5].Value + "," + cbbEmp.SelectedValue + ")";
+                            cmd.ExecuteNonQuery();
+                        }
                     }
-                    Session["buyitems"] = null;
-                    GridView1.DataSource = null;
+                    dgvOrder.Rows.Clear();
                     totalPrice.Text = "";
-                    Label1.Text = "";
-                    Label a = (Label)Master.FindControl("countProInCart");
-                    a.Text = "0";
-                    GridView1.DataBind();
-                    notification.Text = "Mua thành công!";
+                    MessageBox.Show("Đặt thành công !");
                     scon.Close();
 
-                }
-                else
-                {
-                    Response.Redirect("Login.aspx");
                 }
             }
             catch (SqlException ex)
             {
-                notification.Text = ex.Message;
+                MessageBox.Show(ex.Message.ToString());
             }
+        }
+
+        private void OrderForm_Load(object sender, EventArgs e)
+        {
+            // TODO: This line of code loads data into the 'managerResterantDataSet1.Employee' table. You can move, or remove it, as needed.
+            this.employeeTableAdapter.Fill(this.managerResterantDataSet1.Employee);
+            // TODO: This line of code loads data into the 'managerResterantDataSet.Customer' table. You can move, or remove it, as needed.
+            this.customerTableAdapter.Fill(this.managerResterantDataSet.Customer);
+
         }
     }
 }

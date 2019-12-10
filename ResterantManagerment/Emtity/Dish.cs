@@ -24,8 +24,8 @@ namespace ResterantManagerment.Emtity
 
         public int? KindOfDishId { get; set; }
 
-        [StringLength(255)]
-        public string Image { get; set; }
+        //[StringLength(255)]
+        //public string Image { get; set; }
 
         public virtual KindOfDish KindOfDish { get; set; }
 
